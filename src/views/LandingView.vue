@@ -42,10 +42,12 @@ export default {
 
 <template>
   <div class="Header">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+    <router-link to="/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+    </router-link>
     <div class="HeaderText">
     <ul>
-      <li>Home</li>
+      <li><router-link to="/">Home</router-link></li>
       <li>Movies</li>
       <li>Popular</li>
     </ul>
@@ -57,19 +59,23 @@ export default {
   </div>
   <H1>TRENDING</H1>
    <div class="card-container">
-     <div class="card" v-for="(movie, index) in movies.slice(0, 15)" :key="movie.id">
+     <div class="cardHome" v-for="(movie, index) in movies.slice(0, 15)" :key="movie.id">
      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie poster">
     </div>
   </div>
 </template>
   
   <style>
-  .card {
+  .cardHome {
+    position: relative;
+  transition: transform 0.3s ease;
   margin: 10px;
   width: 25%;
   display: flex;
+  flex-direction: column; /* Make the flex items stack vertically */
+  align-items: center;
   }
-  .card img {
+  .cardHome img {
   border: 1px solid #ccc;
   border-radius: 8px;
   margin: 10px;

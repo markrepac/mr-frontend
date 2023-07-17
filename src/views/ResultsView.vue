@@ -68,42 +68,45 @@ const truncateText = (text, length) => {
 </script>
 
 <template>
-  <div class="Header">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+   <div class="Header">
+    <router-link to="/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+    </router-link>
     <div class="HeaderText">
     <ul>
-      <li>Home</li>
-      <li>{{message}}</li>
+      <li><router-link to="/">Home</router-link></li>
+      <li>Movies</li>
       <li>Popular</li>
     </ul>
     </div>
   </div>
-<div class="card-container" >
+  <div class="card-container" >
     <div class="card"  v-for="result in paginatedResults" :key="result.id" >
     <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
     <div class="progress-bar">
-  <div class="progress-bar-fill" :style="{width: `${vote_average * 10}%`}"></div>
-</div>
+      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>SCORE</p></div>
+    </div>
     <div class="overlay-text">
         <p class="overlay-title">{{ result.title }}</p>
-        <p class="overlay-vote">Score: {{ result.vote_average.toFixed(1) }}</p>
         <p>{{ truncateText(result.overview, 100) }}</p>
       </div>
     </div>
     <div class="card"  v-for="result in paginatedResults2" :key="result.id" >
     <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
+    <div class="progress-bar">
+      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>SCORE</p></div>
+    </div>
     <div class="overlay-text">
         <p class="overlay-title">{{ result.title }}</p>
-        <p class="overlay-vote">Score: {{ result.vote_average.toFixed(1) }}</p>
         <p>{{ truncateText(result.overview, 100) }}</p>
       </div>
     </div>
 </div>
 
 <div class="pagination">
-  <button class="myButton" @click="prevPage" :disabled="currentPage === 1">Previous</button>
+  <button class="myButton" v-if="currentPage !== 1" @click="prevPage">Previous</button>
   <span>Page {{ currentPage }} of {{ totalPages }}</span>
-  <button class="myButton" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+  <button class="myButton" v-if="currentPage !== totalPages" @click="nextPage">Next</button>
 </div>
 
 </template>
@@ -135,13 +138,13 @@ svg{
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;}
-  .card {
-  position: relative;
-  transition: transform 0.3s ease;
+  
+.card img {
+  border: 1px solid #ccc;
+  border-radius: 8px;
   margin: 10px;
-  width: 25%;
+  width: 100%;
   display: flex;
-  flex-direction: column; /* Make the flex items stack vertically */
 }
 
 .card {
@@ -214,9 +217,16 @@ svg{
 
 .progress-bar-fill {
   height: 20px;
-  background-color: #00ffae;
+  background-color: #0000ff;
   border-radius: 25px;
   width: 0;
+}
+
+.progress-bar-fill p{
+  font-family: inherit;
+  padding: 0px 0px 10px 10px;
+  font-weight: bold;
+  color: rgb(148, 148, 148);
 }
  
 </style>
