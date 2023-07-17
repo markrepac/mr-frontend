@@ -151,7 +151,4 @@ export default {
   font-size: large;
   color: white;
 }
-
-
-
-  </style>
+</style>
