@@ -45,6 +45,7 @@ export default {
     <router-link to="/">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
     </router-link>
+    <div class="Welcome">Millions of movies, TV shows and people to discover. Explore now.</div>
     <div class="HeaderText">
     <ul>
       <li><router-link to="/">Home</router-link></li>
@@ -53,6 +54,7 @@ export default {
     </ul>
     </div>
   </div>
+
   <div class="Search">
    <input class="SearchBar" type="text" v-model="message" placeholder="Enter a movie name">
     <button class="myButton" @click="goToResults">Search</button>
@@ -142,6 +144,12 @@ export default {
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 25px;
+}
+.Welcome{
+  margin: auto;
+  font-family: inherit;
+  font-size: large;
+  color: white;
 }
 
 
