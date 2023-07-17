@@ -11,6 +11,8 @@ let results2 = ref([])
 let currentPage = ref(1)
 const itemsPerPage = 9
 
+//API STUFF
+
 onBeforeMount(() => {
   message = route.params.message
 })
@@ -32,7 +34,14 @@ onMounted(async () => {
   results2.value = data2.results.filter(item => item.poster_path !== null)
 
 
+  if (results.value.length === 0 && results2.value.length === 0) {
+    router.push('/error');
+  }
+
+
 })
+
+// PAGINATION STUFF
 
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -62,6 +71,8 @@ const prevPage = () => {
   }
 }
 
+//CARD TEXT LIMITER
+
 const truncateText = (text, length) => {
     return text.length > length ? text.substring(0, length) + '...' : text;
   };
@@ -84,7 +95,7 @@ const truncateText = (text, length) => {
     <div class="card"  v-for="result in paginatedResults" :key="result.id" >
     <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
     <div class="progress-bar">
-      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>SCORE</p></div>
+      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>{{`${(result.vote_average * 10).toFixed(1)}%`}}</p></div>
     </div>
     <div class="overlay-text">
         <p class="overlay-title">{{ result.title }}</p>
@@ -94,7 +105,7 @@ const truncateText = (text, length) => {
     <div class="card"  v-for="result in paginatedResults2" :key="result.id" >
     <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
     <div class="progress-bar">
-      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>SCORE</p></div>
+      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>{{`${(result.vote_average * 10).toFixed(1)}%`}}</p></div>
     </div>
     <div class="overlay-text">
         <p class="overlay-title">{{ result.title }}</p>
