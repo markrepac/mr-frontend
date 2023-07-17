@@ -1,52 +1,19 @@
 # vue-test
 
-This template should help get you started developing with Vue 3 in Vite.
+Zahteve
 
-## Recommended IDE Setup
+Za zagon te aplikacije potrebujete naslednje orodje:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Node.js (v14.0.0 ali novejša) npm (v6.0.0 ali novejša) Vue.js (v2.x ali v3.x)
 
-## Type Support for `.vue` Imports in TS
+Namestitev Najprej namestite Node.js in npm. Navodila za namestitev lahko najdete na uradni spletni strani Node.js (https://nodejs.org/en/download).
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+Za namestitev Vue.js uporabite ukaz npm init vue@latest za namestitev Vue CLI (Command Line Interface).
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+Preden zaženete aplikacijo, morate namestiti vse odvisnosti. To storite z ukazom npm install v korenski mapi projekta.
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+Zagon aplikacije
 
-## Customize configuration
+Aplikacijo lahko zaženete lokalno z ukazom npm run dev. Ta ukaz zažene strežnik za razvoj, ki samodejno osveži stran, ko naredite spremembe v kodi.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Uporaba Po zagonu strežnika obiščite http://localhost:8080 (ali drugačen naslov, ki ga izpiše konzola) v vašem brskalniku, da začnete uporabljati aplikacijo.
