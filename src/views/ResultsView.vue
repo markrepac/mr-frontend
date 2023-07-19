@@ -4,7 +4,7 @@ import Card from '../components/Card.vue';
 import Header from '../components/Header.vue';
 import { ref, onBeforeMount, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchMovies } from '../API/api'
+import { fetchMovies } from '../API/searchAPI'
 
 export default {
   components: {
@@ -18,6 +18,7 @@ export default {
 
     let message = ''
     let results = ref([])
+    let isLoading = ref(true)  // New loading state
 
     let currentPage = ref(1)
     const itemsPerPage = 9
@@ -27,14 +28,23 @@ export default {
     })
 
     onMounted(async () => {
-      const data = await fetchMovies(message);
+      try {
+        const data = await fetchMovies(message);
 
-      results.value = data.filter(item => item.poster_path !== null)
+        results.value = data.filter(item => !!item.poster_path)
 
-      console.log(results.value);
+        console.log(results.value);
 
-      if (results.value.length === 0) {
+        
+
+        if (results.value.length === 0) {
+          router.push('/error');
+        }
+      } catch (error) {
+        console.error("Error fetching movies:", error);
         router.push('/error');
+      } finally {
+        isLoading.value = false; // Stop loading after fetch operation is done
       }
     })
 
@@ -60,12 +70,15 @@ export default {
       }
     }
 
-    return {  paginatedResults, totalPages, nextPage, prevPage, currentPage  }
+    return {  paginatedResults, totalPages, nextPage, prevPage, currentPage, isLoading  }
   }
 }
 </script>
 
 <template>
+
+<div class="loadingScreen" v-if="isLoading">Loading...</div>
+  <div v-else>
    <Header title='Millions of movies, TV shows and people to discover. Explore now.' :links="['Home','Movies','Popular']" />
 
   <div class="card-container" >
@@ -77,7 +90,7 @@ export default {
     :total-pages="totalPages"
     @update:currentPage="currentPage = $event"
   />
-
+ </div>
 </template>
 
 <style>
@@ -106,7 +119,8 @@ svg{
 .card-container {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;}
+  flex-wrap: wrap;
+}
   
 .card img {
   border: 1px solid #ccc;
@@ -197,5 +211,15 @@ svg{
   font-weight: bold;
   color: rgb(148, 148, 148);
 }
- 
+.loadingScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  font-size: 40px;
+}
 </style>

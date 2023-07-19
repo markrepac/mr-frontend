@@ -20,6 +20,11 @@ const router = createRouter({
       component: ResultsView,
       props: true
     },
+    {
+      path: '/loading',
+      name: 'Loading',
+      component: () => import('../views/LoadingView.vue')
+    },
   ]
 })
 
