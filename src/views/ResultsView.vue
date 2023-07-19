@@ -1,124 +1,82 @@
-<script setup lang="ts">
-import { ref, onBeforeMount, onMounted,computed } from 'vue'
-import { useRoute } from 'vue-router'
+<script lang="ts">
+import Pagination from '../components/Pagination.vue';
+import Card from '../components/Card.vue';
+import Header from '../components/Header.vue';
+import { ref, onBeforeMount, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { fetchMovies } from '../API/api'
 
-const route = useRoute()
+export default {
+  components: {
+    Card,
+    Header,
+    Pagination,
+  },
+  setup() {
+    const router = useRouter()
+    const route = useRoute()
 
-let message = ''
-let results = ref([])
-let results2 = ref([])
+    let message = ''
+    let results = ref([])
 
-let currentPage = ref(1)
-const itemsPerPage = 9
+    let currentPage = ref(1)
+    const itemsPerPage = 9
 
-//API STUFF
+    onBeforeMount(() => {
+      message = route.params.message
+    })
 
-onBeforeMount(() => {
-  message = route.params.message
-})
+    onMounted(async () => {
+      const data = await fetchMovies(message);
 
-onMounted(async () => {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMTg5YTQwMGJmNmEwNGNlOWY4OWUyZjkyNGIzZjY2YyIsInN1YiI6IjY0YWZiNGQyYzQ5MDQ4MDBjNTA2YmMwMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.1iVt041l5PJ5Zaasv7X-a6QaGwmGb_kx-mVKcvOuSlw'
+      results.value = data.filter(item => item.poster_path !== null)
+
+      console.log(results.value);
+
+      if (results.value.length === 0) {
+        router.push('/error');
+      }
+    })
+
+    const paginatedResults = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage
+      const end = start + itemsPerPage
+      return results.value.slice(start, end)
+    })
+
+    const totalPages = computed(() => {
+      return Math.ceil(results.value.length / itemsPerPage)
+    })
+
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++
+      }
     }
-  };
-  const response = await fetch(`https://api.themoviedb.org/3/search/multi?include_adult=false&language=en-US&page=1&query=${message}`, options)
-  const response2= await fetch(`https://api.themoviedb.org/3/search/tv?include_adult=false&language=en-US&page=1query=${message}`, options)
-  const data = await response.json()
-  const data2 = await response2.json()
 
-  results.value = data.results.filter(item => item.poster_path !== null)
-  results2.value = data2.results.filter(item => item.poster_path !== null)
+    const prevPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--
+      }
+    }
 
-
-  if (results.value.length === 0 && results2.value.length === 0) {
-    router.push('/error');
-  }
-
-
-})
-
-// PAGINATION STUFF
-
-const paginatedResults = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return results.value.slice(start, end)
-})
-
-const paginatedResults2 = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return results2.value.slice(start, end)
-})
-
-const totalPages = computed(() => {
-  return Math.ceil((results.value.length + results2.value.length) / itemsPerPage)
-})
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
+    return {  paginatedResults, totalPages, nextPage, prevPage, currentPage  }
   }
 }
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-
-//CARD TEXT LIMITER
-
-const truncateText = (text, length) => {
-    return text.length > length ? text.substring(0, length) + '...' : text;
-  };
 </script>
 
 <template>
-   <div class="Header">
-    <router-link to="/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
-    </router-link>
-    <div class="HeaderText">
-    <ul>
-      <li><router-link to="/">Home</router-link></li>
-      <li>Movies</li>
-      <li>Popular</li>
-    </ul>
-    </div>
-  </div>
-  <div class="card-container" >
-    <div class="card"  v-for="result in paginatedResults" :key="result.id" >
-    <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
-    <div class="progress-bar">
-      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>{{`${(result.vote_average * 10).toFixed(1)}%`}}</p></div>
-    </div>
-    <div class="overlay-text">
-        <p class="overlay-title">{{ result.title }}</p>
-        <p>{{ truncateText(result.overview, 100) }}</p>
-      </div>
-    </div>
-    <div class="card"  v-for="result in paginatedResults2" :key="result.id" >
-    <img v-if="result.poster_path" :src="`https://image.tmdb.org/t/p/w500${result.poster_path}`" alt="Movie poster">
-    <div class="progress-bar">
-      <div class="progress-bar-fill" :style="{width: `${result.vote_average * 10}%`}"><p>{{`${(result.vote_average * 10).toFixed(1)}%`}}</p></div>
-    </div>
-    <div class="overlay-text">
-        <p class="overlay-title">{{ result.title }}</p>
-        <p>{{ truncateText(result.overview, 100) }}</p>
-      </div>
-    </div>
-</div>
+   <Header title='Millions of movies, TV shows and people to discover. Explore now.' :links="['Home','Movies','Popular']" />
 
-<div class="pagination">
-  <button class="myButton" v-if="currentPage !== 1" @click="prevPage">Previous</button>
-  <span>Page {{ currentPage }} of {{ totalPages }}</span>
-  <button class="myButton" v-if="currentPage !== totalPages" @click="nextPage">Next</button>
-</div>
+  <div class="card-container" >
+    <Card v-for="result in paginatedResults" :key="result.id" :result="result" />
+  </div>
+  
+  <Pagination
+    :current-page="currentPage"
+    :total-pages="totalPages"
+    @update:currentPage="currentPage = $event"
+  />
 
 </template>
 
@@ -165,8 +123,8 @@ svg{
   margin: 10px;
   width: 25%;
   display: flex;
-  flex-direction: column; /* Make the flex items stack vertically */
-  align-items: center; /* Center items along the cross axis */
+  flex-direction: column; 
+  align-items: center; 
 }
   .myButton {
   background-color: blue; 
@@ -190,24 +148,24 @@ svg{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
-  color: white; /* White text */
+  background-color: rgba(0, 0, 0, 0.6); 
+  color: white; 
   text-align: center;
-  padding: 2vw; /* Responsive padding */
+  padding: 2vw;
   border-radius: 25px;
 }
 
 .overlay-title {
   font-weight: bold;
-  font-size: 2vw; /* Responsive font size */
+  font-size: 2vw; 
 }
 
 .overlay-vote {
   font-weight: bold;
-  font-size: 2.5vw; /* Responsive font size */
+  font-size: 2.5vw;
 }
 
-/* Adjust font size for larger screens */
+
 @media screen and (min-width: 600px) {
   .overlay-title {
     font-size: 1.5vw;

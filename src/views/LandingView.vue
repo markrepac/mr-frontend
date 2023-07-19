@@ -1,8 +1,16 @@
 <script lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import Header from '../components/Header.vue';
+import Search from '../components/Search.vue';
+import { fetchTrendingMovies } from '../API/trendingAPI'
+import { fetchMovies } from '../API/searchAPI';
 
 export default {
+  components: {
+    Header,
+    Search,
+  },
   data() {
     return {
       message: '',
@@ -11,55 +19,37 @@ export default {
     }
   },
   methods: {
+    searchMovies(query) {
+    this.message = query;
+    this.goToResults();
+  },
     goToResults() {
       this.$router.push({ name: 'Results', params: { message: this.message } });
     },
   },
   mounted() {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMTg5YTQwMGJmNmEwNGNlOWY4OWUyZjkyNGIzZjY2YyIsInN1YiI6IjY0YWZiNGQyYzQ5MDQ4MDBjNTA2YmMwMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.1iVt041l5PJ5Zaasv7X-a6QaGwmGb_kx-mVKcvOuSlw'
-      }
-    };
-
-    const fetchMovies = async () => {
-      try {
-        const response = await fetch('https://api.themoviedb.org/3/trending/all/week?api_key=1189a400bf6a04ce9f89e2f924b3f66c', options)
-        const data = await response.json()
-        this.movies = data.results
-      } catch (err) {
-        console.error(err)
-        this.error = err
-      }
-    }
-
-    fetchMovies()
+    fetchTrendingMovies()
+      .then(movies => {
+        this.movies = movies;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        this.error = error;
+      });
   }
 }
+
 </script>
 
 <template>
-  <div class="Header">
-    <router-link to="/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
-    </router-link>
-    <div class="Welcome">Millions of movies, TV shows and people to discover. Explore now.</div>
-    <div class="HeaderText">
-    <ul>
-      <li><router-link to="/">Home</router-link></li>
-      <li>Movies</li>
-      <li>Popular</li>
-    </ul>
-    </div>
-  </div>
+
+  <Header title='Millions of movies, TV shows and people to discover. Explore now.' :links="['Home','Movies','Popular']" />
 
   <div class="Search">
-   <input class="SearchBar" type="text" v-model="message" placeholder="Enter a movie name">
-    <button class="myButton" @click="goToResults">Search</button>
+  <Search :message="message" @search="searchMovies" />
   </div>
-  <H1>TRENDING</H1>
+  
+  <h1>TRENDING</h1>
    <div class="card-container">
      <div class="cardHome" v-for="(movie, index) in movies.slice(0, 15)" :key="movie.id">
      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie poster">
@@ -74,7 +64,7 @@ export default {
   margin: 10px;
   width: 25%;
   display: flex;
-  flex-direction: column; /* Make the flex items stack vertically */
+  flex-direction: column; 
   align-items: center;
   }
   .cardHome img {
@@ -146,9 +136,9 @@ export default {
   border-radius: 25px;
 }
 .Welcome{
-  margin: auto;
   font-family: inherit;
   font-size: large;
   color: white;
+  text-align: center;
 }
 </style>
