@@ -2,7 +2,7 @@
 import Pagination from '../components/Pagination.vue';
 import Card from '../components/Card.vue';
 import Header from '../components/Header.vue';
-import { ref, onBeforeMount, onMounted, computed } from 'vue'
+import { ref, onBeforeMount, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchMovies } from '../API/searchAPI'
 import Search from '../components/Search.vue';
@@ -13,16 +13,6 @@ export default {
     Header,
     Pagination,
     Search,
-  },
-
-  methods: {
-    searchMovies(query) {
-    this.message = query;
-    this.goToResults();
-  },
-    goToResults() {
-      this.$router.push({ name: 'Results', params: { message: this.message } });
-    },
   },
   setup() {
     const router = useRouter()
@@ -35,30 +25,12 @@ export default {
     let currentPage = ref(1)
     const itemsPerPage = 9
 
-    onBeforeMount(() => {
-      message.value = route.params.message  // use .value to set the value of a ref
-    })
-
-    const searchMovies = async (query) => {
-    message.value = query;
-    isLoading.value = true;
-    results.value = [];  // Clear the old results
-    await fetchAndSetMovies();  // Fetch the new results
-    goToResults();
-    }
-
-    const goToResults = () => {  // define this inside setup
-      router.push({ name: 'Results', params: { message: message.value } });
-    }
-
-    onMounted(async () => {
+    const fetchAndSetMovies = async () => {
       try {
+        isLoading.value = true;
         const data = await fetchMovies(message.value);
-
         results.value = data.filter(item => !!item.poster_path)
-
         console.log(results.value);
-
         if (results.value.length === 0) {
           router.push('/error');
         }
@@ -66,27 +38,24 @@ export default {
         console.error("Error fetching movies:", error);
         router.push('/error');
       } finally {
-        isLoading.value = false; // Stop loading after fetch operation is done
+        isLoading.value = false;
       }
+    }
+
+    watch(message, fetchAndSetMovies);
+
+    const searchMovies = (query) => {
+      if (!query.trim()) {
+        return;
+      }
+      message.value = query;
+    }
+
+    onBeforeMount(() => {
+      message.value = route.params.message;  // use .value to set the value of a ref
     })
 
-    const fetchAndSetMovies = async () => {
-    try {
-        const data = await fetchMovies(message.value);
-        results.value = data.filter(item => !!item.poster_path)
-        console.log(results.value);
-        if (results.value.length === 0) {
-          router.push('/error');
-        }
-    } catch (error) {
-        console.error("Error fetching movies:", error);
-        router.push('/error');
-    } finally {
-        isLoading.value = false; // Stop loading after fetch operation is done
-    }
-}
-
-  	onMounted(fetchAndSetMovies);
+    onMounted(fetchAndSetMovies);
 
     const paginatedResults = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage

@@ -27,7 +27,7 @@ export default {
 
     const debounceEmitSearch = () => {
       clearTimeout(timeout);
-      timeout = setTimeout(emitSearch, 2000);
+      timeout = setTimeout(emitSearch, 1000);
     }
 
     return { query, emitSearch, debounceEmitSearch };
