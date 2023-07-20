@@ -18,9 +18,9 @@ export default {
     const router = useRouter()
     const route = useRoute()
 
-    let message = ref('');  // use ref here
+    let message = ref('');  
     let results = ref([])
-    let isLoading = ref(true)  // New loading state
+    let isLoading = ref(true)  
 
     let currentPage = ref(1)
     const itemsPerPage = 9
@@ -52,7 +52,7 @@ export default {
     }
 
     onBeforeMount(() => {
-      message.value = route.params.message;  // use .value to set the value of a ref
+      message.value = route.params.message; 
     })
 
     onMounted(fetchAndSetMovies);
