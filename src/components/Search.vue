@@ -1,9 +1,9 @@
 <template>
-      <input class="SearchBar" type="text" v-model="query" placeholder="Enter a movie name">
-      <button class="myButton" @click="emitSearch">Search</button>
-  </template>
-  
-  <script lang="ts" >
+    <input class="SearchBar" type="text" v-model="query" placeholder="Enter a movie name" @input="debounceEmitSearch">
+    <button class="myButton" @click="emitSearch">Search</button>
+</template>
+
+<script lang="ts">
 import { ref, watch } from 'vue';
 
 export default {
@@ -15,6 +15,7 @@ export default {
   },
   setup(props, { emit }) {
     const query = ref(props.message);
+    let timeout;
 
     watch(() => props.message, (newVal) => {
       query.value = newVal;
@@ -24,9 +25,12 @@ export default {
       emit('search', query.value);
     };
 
-    return { query, emitSearch };
+    const debounceEmitSearch = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(emitSearch, 2000);
+    }
+
+    return { query, emitSearch, debounceEmitSearch };
   }
 };
-  </script>
-  
-  
+</script>
