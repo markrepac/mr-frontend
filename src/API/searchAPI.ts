@@ -1,5 +1,5 @@
-const API_KEY: string = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMTg5YTQwMGJmNmEwNGNlOWY4OWUyZjkyNGIzZjY2YyIsInN1YiI6IjY0YWZiNGQyYzQ5MDQ4MDBjNTA2YmMwMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.1iVt041l5PJ5Zaasv7X-a6QaGwmGb_kx-mVKcvOuSlw';
-const BASE_URL: string = 'https://api.themoviedb.org/3';
+const API_KEY: string = process.env.VUE_APP_API_KEY || '';
+const BASE_URL: string = process.env.VUE_APP_BASE_URL || '';
 
 const fetchMovies = async (searchQuery: string): Promise<MovieResult[]> => {
     try {
