@@ -1,5 +1,5 @@
-const API_KEY: string = process.env.VUE_APP_API_KEY || '';
-const BASE_URL: string = process.env.VUE_APP_BASE_URL || '';
+const API_KEY = import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const fetchTrendingMovies = async (): Promise<MovieResult[]> => {
     try {
