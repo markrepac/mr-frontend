@@ -18,9 +18,9 @@
 
 <template>
     <div class="pagination">
-      <button class="myButton" :disabled="currentPage === 1" @click="prevPage">Previous</button>
+      <button class="myButton prev-button" :disabled="currentPage === 1" @click="prevPage">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="myButton" :disabled="currentPage === totalPages" @click="nextPage">Next</button>
+      <button class="myButton next-button" :disabled="currentPage === totalPages" @click="nextPage">Next</button>
     </div>
   </template>
   
